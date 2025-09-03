@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 
-const uri = process.env.MONGO_URI; // defined in .env or host env
-if (!uri) {
-  console.warn('Warning: MONGO_URI not set yet.');
-}
+const uri = process.env.MONGO_URI || '';
+mongoose.connection.on('connected', () => console.log('✅ MongoDB connected'));
+mongoose.connection.on('error', err => console.error('❌ MongoDB error:', err.message));
 
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-// Exporting mongoose is optional; it can help in other files
 module.exports = mongoose;
+
 
