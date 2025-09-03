@@ -1,11 +1,10 @@
 {
-  "name": "mongodb-and-mongoose",
+  "name": "fcc-mongodb-and-mongoose",
   "version": "1.0.0",
   "description": "FCC MongoDB & Mongoose challenges",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
