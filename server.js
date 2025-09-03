@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
-const path = require('path');      // ⬅ for reading package.json
-const fs = require('fs');          // ⬅ for reading package.json
+const path = require('path');      // for reading package.json
+const fs = require('fs');          // for reading package.json
 const app = express();
 
 // Initialize mongoose (connect happens inside myApp.js)
@@ -26,6 +26,20 @@ app.get('/uri-check', (req, res) => {
   res.json({ type, startsWith: v.slice(0, 20), maskedQuery: masked.slice(-60) });
 });
 // --------------------------------------
+
+// -------- NEW: env-check (see which Mongo env vars exist) --------
+app.get('/env-check', (req, res) => {
+  // pick only vars whose name starts with MONGO*
+  const pick = Object.fromEntries(
+    Object.entries(process.env).filter(([k]) => k.toUpperCase().startsWith('MONGO'))
+  );
+  // mask credentials in any URLs
+  const masked = Object.fromEntries(
+    Object.entries(pick).map(([k, v]) => [k, (v || '').replace(/\/\/.*?:.*?@/, '//<user>:<pass>@')])
+  );
+  res.json(masked);
+});
+// -----------------------------------------------------------------
 
 // -------- FCC helper routes --------
 // Lets FCC read your package.json to verify "mongoose": "^5.11.15"
