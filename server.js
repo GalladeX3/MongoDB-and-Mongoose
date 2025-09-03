@@ -14,6 +14,14 @@ app.get('/db-check', (req, res) => {
   res.json({ readyState: require('mongoose').connection.readyState });
 });
 
+app.get('/uri-check', (req, res) => {
+  const v = process.env.MONGO_URI || '';
+  const type = v.startsWith('mongodb+srv://') ? 'srv'
+             : v.startsWith('mongodb://')     ? 'standard'
+             : 'unknown';
+  const masked = v.replace(/\/\/.*?:.*?@/, '//<user>:<pass>@');
+  res.json({ type, startsWith: v.slice(0, 20), maskedQuery: masked.slice(-60) });
+});
 
 // IMPORTANT for hosts like Render: use the provided PORT
 const port = process.env.PORT || 3000;
