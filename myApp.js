@@ -1,26 +1,25 @@
+/** # MONGOOSE SETUP #
+/*  ================== */
+
 const mongoose = require('mongoose');
 
-const uri = process.env.MONGO_URI || '';
+// FCC expects MONGO_URI to come from env
+const uri = (process.env.MONGO_URI || '').trim();
 
-const mask = s => s
-  ? s.replace(/\/\/.*?:.*?@/, '//<user>:<pass>@').slice(0, 80) + '...'
-  : '(empty)';
+if (!uri) {
+  console.warn('⚠️  MONGO_URI is empty. Set it in your host environment.');
+}
 
-console.log('MONGO_URI present?', !!uri);
-console.log('MONGO_URI startsWith:', uri.slice(0, 14)); // should be "mongodb+srv://"
-console.log('MONGO_URI masked:', mask(uri));
+// Mask creds in logs (safe)
+const mask = s => s ? s.replace(/\/\/.*?:.*?@/, '//<user>:<pass>@') : '(empty)';
+console.log('[MONGO] using:', uri.startsWith('mongodb+srv://') ? 'srv' :
+                           uri.startsWith('mongodb://') ? 'standard' : 'unknown',
+            mask(uri));
 
 mongoose.connection.on('connected', () => console.log('✅ MongoDB connected'));
 mongoose.connection.on('error', err => console.error('❌ MongoDB error:', err.message));
 
-// If you STILL have a non-SRV string, this forces db name anyway:
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  dbName: 'fccdb'
-});
+// FCC wants connect with options
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 module.exports = mongoose;
-
-
-
